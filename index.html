@@ -9,7 +9,7 @@
   <style>
     .cipher__wrapper {
       box-sizing: border-box;
-      max-width: 650px;
+      max-width: 770px;
       margin: 0 auto;
       padding: 0 10px;
     }
@@ -79,10 +79,14 @@
       max-width: 600px;
     }
 
+    .cipher__pdf-layout-wrapper .cipher__symbols-list {
+      gap: 0;
+      max-width: 100%;
+    }
+
     .cipher__symbol-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 10px;
       align-items: center;
     }
 
@@ -127,6 +131,11 @@
       min-height: 82px;
     }
 
+    .cipher__pdf-layout-wrapper .cipher__result {
+      max-width: 100%;
+      margin: 0;
+    }
+
     .cipher__result img {
       width: 75px;
       height: calc(75px * 1.52);
@@ -166,8 +175,9 @@
     }
 
     .cipher__pdf-layout-wrapper {
-      max-width: 650px;
+      max-width: 770px;
       margin: 0 auto;
+      padding-right: 15px;
     }
 
     .cipher__pdf-layout-wrapper .cipher__title {
@@ -193,12 +203,27 @@
       page-break-before: always;
     }
 
+    .cipher__pdf-top .cipher__title {
+      margin-left: 50px;
+    }
+
     .cipher__pdf-bottom .cipher__title {
       margin-top: 20px;
+      margin-left: 50px;
     }
 
     .cipher__margin-top {
       opacity: 0;
+    }
+
+    .cipher__pdf-layout-wrapper .cipher__symbol-img {
+      width: 103px;
+      height: calc(103px * 1.52);
+    }
+
+    .cipher__pdf-layout-wrapper .cipher__result img {
+      width: 103px;
+      height: calc(103px * 1.52);
     }
   </style>
 
@@ -259,48 +284,29 @@
       const cipherResult = document.querySelector(".cipher__result");
       const downloadPDFbtn = document.querySelector(".cipher__pdf");
 
+      function getletterPosition(letter) {
+        const russianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+        const lowerLetter = letter.toLowerCase();
+        const position = russianAlphabet.indexOf(lowerLetter) + 1; // +1 для соответствия позиции
+        return position > 0 ? position : null; // null, если символ не найден
+      }
+
+      function getLetterByNumber(number) {
+        const chosenAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+
+        return chosenAlphabet && number >= 1 && number <= chosenAlphabet.length
+          ? chosenAlphabet[number - 1] // Индекс начинается с 0, номер — с 1
+          : null; // Если алфавит не найден или номер вне диапазона
+      }
+
       const createSymbolsList = (number) => {
         const container = document.querySelector(".cipher__symbols-list");
         const imagePath = `./images/${number}`;
         // Очистка контейнера перед вставкой
         container.innerHTML = "";
 
-        const alphabet = [
-          "а",
-          "б",
-          "в",
-          "г",
-          "д",
-          "е",
-          "ё",
-          "ж",
-          "з",
-          "и",
-          "й",
-          "к",
-          "л",
-          "м",
-          "н",
-          "о",
-          "п",
-          "р",
-          "с",
-          "т",
-          "у",
-          "ф",
-          "х",
-          "ц",
-          "ч",
-          "ш",
-          "щ",
-          "ы",
-          "э",
-          "ю",
-          "я",
-        ];
-
         // Преобразование текста в изображения
-        for (const char of alphabet) {
+        for (let char = 1; char < 34; char++) {
           if (/[а-яё0-9]/.test(char)) {
             // Создание нового списка <li> с классами
             const listItem = document.createElement("li");
@@ -309,7 +315,7 @@
             // Создание контейнера для буквы
             const letterDiv = document.createElement("div");
             letterDiv.className = "cipher__letter";
-            letterDiv.textContent = char;
+            letterDiv.textContent = getLetterByNumber(char);
 
             // Создание контейнера для изображения
             const symbolDiv = document.createElement("div");
@@ -317,9 +323,7 @@
 
             // Создание изображения
             const img = document.createElement("img");
-            const encodedChar = encodeURIComponent(char);
-            img.src = `${imagePath}/${encodedChar}.png`;
-            img.alt = char; // Альтернативный текст для SEO
+            img.src = `${imagePath}/${char}.png`; // Путь к изображению
             img.className = "cipher__symbol-img"; // Добавляем класс для изображения
 
             // Добавление изображения в контейнер
@@ -348,7 +352,7 @@
           if (/[а-яё0-9]/.test(char)) {
             // Если символ - буква или цифра, добавляем изображение
             const img = document.createElement("img");
-            img.src = `${imagePath}/${char}.png`; // Путь к изображению
+            img.src = `${imagePath}/${getletterPosition(char)}.png`; // Путь к изображению
             img.alt = char; // Альтернативный текст для SEO
             container.appendChild(img);
           } else if (char === " ") {
@@ -423,9 +427,14 @@
         // Опции для PDF
         var options = {
           margin: 0,
-          filename: "document.pdf",
+          filename: "cipher.pdf",
           image: { type: "jpeg", quality: 100 },
-          html2canvas: { dpi: 300, letterRendering: true },
+          html2canvas: {
+            dpi: 300,
+            letterRendering: true,
+            scale: 1,
+            useCORS: true,
+          },
           jsPDF: {
             unit: "mm",
             format: "a4",

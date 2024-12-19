@@ -317,7 +317,8 @@
 
             // Создание изображения
             const img = document.createElement("img");
-            img.src = `${imagePath}/${char}.png`; // Путь к изображению
+            const encodedChar = encodeURIComponent(char);
+            img.src = `${imagePath}/${encodedChar}.png`;
             img.alt = char; // Альтернативный текст для SEO
             img.className = "cipher__symbol-img"; // Добавляем класс для изображения
 

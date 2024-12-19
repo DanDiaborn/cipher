@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <style>
+    .cipher__wrapper {
+      box-sizing: border-box;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    .cipher__wrapper * {
+      box-sizing: border-box;
+    }
+
+    .cipher ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .cipher__title {
+      font-size: 24px;
+      line-height: 1.5;
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .cipher__difficulty-list {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .cipher__difficulty-item {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e88009;
+      color: #fff;
+      font-size: 18px;
+      transition: all 0.1s linear;
+    }
+
+    .cipher__difficulty-item:hover {
+      background-color: #fcb14e;
+    }
+
+    .cipher__difficulty-item-active {
+      background-color: #fcb14e;
+    }
+
+    .cipher__tabs {
+      margin-top: 20px;
+    }
+
+    .cipher__tab {
+      display: none;
+    }
+
+    .cipher__tab-active {
+      display: flex;
+      justify-content: center;
+    }
+
+    .cipher__symbols-list {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 600px;
+    }
+
+    .cipher__symbol-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cipher__symbol-img {
+      width: 75px;
+      height: calc(75px * 1.52);
+    }
+
+    .cipher__textarea {
+      max-width: 500px;
+      width: 100%;
+      height: 200px;
+      display: inline-block;
+      resize: none;
+      background-color: #f5f5dc;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      margin-top: 20px;
+      outline: none;
+    }
+
+    .cipher__create-text {
+      text-align: center;
+    }
+
+    .cipher__result {
+      display: block;
+      max-width: 600px;
+      width: 100%;
+      text-align: left;
+      margin: 0 auto;
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      background-color: #f5f5dc;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      min-height: 82px;
+    }
+
+    .cipher__result img {
+      width: 75px;
+      height: calc(75px * 1.52);
+    }
+
+    .cipher__result .spacer {
+      width: 20px;
+      height: calc(40px * 1.52);
+      font-size: 56px;
+      display: flex;
+      align-items: end;
+    }
+
+    .cipher__get-results {
+      display: flex;
+      justify-content: center;
+    }
+
+    .cipher__pdf {
+      margin-top: 20px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e88009;
+      color: #fff;
+      height: 60px;
+      font-size: 16px;
+      padding-left: 60px;
+      padding-right: 60px;
+      cursor: pointer;
+    }
+
+    .cipher__sybmols-list-pdf {
+      display: flex;
+      justify-content: center;
+    }
+
+    .cipher__pdf-layout-wrapper {
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .cipher__pdf-layout-wrapper .cipher__title {
+      text-align: start;
+    }
+
+    .cipher__pdf-layout-wrapper .cipher__result {
+      background-color: #fff;
+      border: none;
+    }
+
+    .cipher__pdf-layout {
+      display: none;
+    }
+
+    .cipher__decryption {
+      font-size: 30px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .cipher__pdf-bottom {
+      page-break-before: always;
+    }
+
+    .cipher__pdf-bottom .cipher__title {
+      margin-top: 20px;
+    }
+
+    .cipher__margin-top {
+      opacity: 0;
+    }
+  </style>
+
+  <body>
+    <div class="cipher">
+      <div class="cipher__wrapper">
+        <div class="cipher__difficulty">
+          <span class="cipher__title">Выберите уровень сложности </span>
+          <ul class="cipher__difficulty-list">
+            <li class="cipher__difficulty-item cipher__difficulty-item-active">
+              1
+            </li>
+            <li class="cipher__difficulty-item">2</li>
+            <li class="cipher__difficulty-item">3</li>
+          </ul>
+        </div>
+        <div class="cipher__symbols">
+          <div class="cipher__tabs">
+            <div class="cipher__tab cipher__tab-active">
+              <ul class="cipher__symbols-list"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="cipher__create-text">
+          <span class="cipher__title">Введите ваш текст </span>
+          <textarea name="text" class="cipher__textarea">Ваш  текст</textarea>
+          <div class="cipher__result"></div>
+        </div>
+        <div class="cipher__get-results">
+          <div class="cipher__pdf">Скачать</div>
+        </div>
+        <div class="cipher__pdf-layout">
+          <div class="cipher__pdf-layout-wrapper">
+            <div class="cipher__pdf-top">
+              <span class="cipher__title">Ключ</span>
+              <div class="cipher__sybmols-list-pdf"></div>
+            </div>
+            <div class="cipher__pdf-bottom">
+              <div class="cipher__margin-top">123</div>
+              <span class="cipher__title">Шифровка</span>
+              <div class="cipher__result-pdf"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const cipherdifficulty = document.querySelectorAll(
+        ".cipher__difficulty-item"
+      );
+      const cipherTabs = document.querySelectorAll(".cipher__tab");
+      const cipherTextarea = document.querySelector(".cipher__textarea");
+      const cipherResult = document.querySelector(".cipher__result");
+      const downloadPDFbtn = document.querySelector(".cipher__pdf");
+
+      const createSymbolsList = (number) => {
+        const container = document.querySelector(".cipher__symbols-list");
+        const imagePath = `./images/${number}`;
+        // Очистка контейнера перед вставкой
+        container.innerHTML = "";
+
+        const alphabet = [
+          "а",
+          "б",
+          "в",
+          "г",
+          "д",
+          "е",
+          "ё",
+          "ж",
+          "з",
+          "и",
+          "й",
+          "к",
+          "л",
+          "м",
+          "н",
+          "о",
+          "п",
+          "р",
+          "с",
+          "т",
+          "у",
+          "ф",
+          "х",
+          "ц",
+          "ч",
+          "ш",
+          "щ",
+          "ы",
+          "э",
+          "ю",
+          "я",
+        ];
+
+        // Преобразование текста в изображения
+        for (const char of alphabet) {
+          if (/[а-яё0-9]/.test(char)) {
+            // Создание нового списка <li> с классами
+            const listItem = document.createElement("li");
+            listItem.className = "cipher__symbol-wrapper";
+
+            // Создание контейнера для буквы
+            const letterDiv = document.createElement("div");
+            letterDiv.className = "cipher__letter";
+            letterDiv.textContent = char;
+
+            // Создание контейнера для изображения
+            const symbolDiv = document.createElement("div");
+            symbolDiv.className = "cipher__symbol";
+
+            // Создание изображения
+            const img = document.createElement("img");
+            img.src = `${imagePath}/${char}.png`; // Путь к изображению
+            img.alt = char; // Альтернативный текст для SEO
+            img.className = "cipher__symbol-img"; // Добавляем класс для изображения
+
+            // Добавление изображения в контейнер
+            symbolDiv.appendChild(img);
+
+            // Добавление контейнера с буквой и символом в <li>
+            listItem.appendChild(letterDiv);
+            listItem.appendChild(symbolDiv);
+
+            // Добавление <li> в контейнер
+            container.appendChild(listItem);
+          }
+        }
+      };
+
+      createSymbolsList(1);
+
+      function renderTextWithImages(text, number) {
+        const container = document.querySelector(".cipher__result");
+        const imagePath = `./images/${number}`;
+        // Очистка контейнера перед вставкой
+        container.innerHTML = "";
+
+        // Преобразование текста в изображения
+        for (const char of text.toLowerCase()) {
+          if (/[а-яё0-9]/.test(char)) {
+            // Если символ - буква или цифра, добавляем изображение
+            const img = document.createElement("img");
+            img.src = `${imagePath}/${char}.png`; // Путь к изображению
+            img.alt = char; // Альтернативный текст для SEO
+            container.appendChild(img);
+          } else if (char === " ") {
+            // Если символ - пробел, добавляем разделитель
+            const spacer = document.createElement("div");
+            spacer.className = "spacer";
+            container.appendChild(spacer);
+          } else if (/[,.;!?(){}[\]'"-]/.test(char)) {
+            const spacer = document.createElement("div");
+            spacer.className = "spacer";
+            spacer.innerHTML = char;
+            container.appendChild(spacer);
+          }
+        }
+      }
+
+      if (cipherdifficulty.length > 0 && cipherTabs.length > 0) {
+        cipherdifficulty.forEach((el, key) => {
+          el.onclick = () => {
+            for (let i = 0; i < cipherdifficulty.length; i++) {
+              cipherdifficulty[i].classList.remove(
+                "cipher__difficulty-item-active"
+              );
+            }
+            cipherdifficulty[key].classList.add(
+              "cipher__difficulty-item-active"
+            );
+            createSymbolsList(el.innerHTML.replace(/\s+/g, ""));
+            renderTextWithImages(
+              cipherTextarea.value,
+              el.innerHTML.replace(/\s+/g, "")
+            );
+          };
+        });
+      }
+
+      if (cipherTextarea) {
+        cipherTextarea.addEventListener("input", () => {
+          cipherTextarea.value = cipherTextarea.value.replace(
+            /[^а-яё\s.,!?-]/gi,
+            ""
+          );
+          const activeNumber = document
+            .querySelector(".cipher__difficulty-item-active")
+            .innerHTML.replace(/\s+/g, "");
+          renderTextWithImages(cipherTextarea.value, activeNumber);
+        });
+      }
+
+      renderTextWithImages(cipherTextarea.value, 1);
+
+      const downloadPDF = () => {
+        // Генерация PDF
+        const pdfLayout = document.querySelector(".cipher__pdf-layout-wrapper");
+        const symbolsListWrapper = document.querySelector(
+          ".cipher__sybmols-list-pdf"
+        );
+        const symbolsList = document.querySelector(".cipher__symbols-list");
+        const resultWrapper = document.querySelector(".cipher__result-pdf");
+        const result = document.querySelector(".cipher__result");
+
+        if (symbolsListWrapper && symbolsList) {
+          symbolsListWrapper.innerHTML = "";
+          symbolsListWrapper.appendChild(symbolsList.cloneNode(true));
+        }
+
+        if (resultWrapper && result) {
+          resultWrapper.innerHTML = "";
+          resultWrapper.appendChild(result.cloneNode(true));
+        }
+
+        // Опции для PDF
+        var options = {
+          margin: 0,
+          filename: "document.pdf",
+          image: { type: "jpeg", quality: 100 },
+          html2canvas: { dpi: 300, letterRendering: true },
+          jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait",
+            autoPaging: true,
+          },
+        };
+
+        html2pdf(pdfLayout, options);
+      };
+
+      if (downloadPDFbtn) {
+        downloadPDFbtn.onclick = () => {
+          downloadPDF();
+        };
+      }
+    });
+  </script>
+</html>
